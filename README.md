@@ -79,56 +79,15 @@ mm
 
 ### macOS (arm64)
 
-#### Option A: install to `/usr/local/bin` (global command, needs admin permission)
-
-Step 1: download binary into your current directory (the folder from `pwd`).
+Default install (recommended):
 
 ```bash
 curl -L -o mm https://github.com/SarriaXD/mouse-mover/releases/latest/download/mm_darwin_arm64
-```
-
-Step 2: make the downloaded file executable.
-
-```bash
 chmod +x mm
-```
-
-Step 3: move it to `/usr/local/bin` so you can run `mm` anywhere.
-
-```bash
 sudo mv mm /usr/local/bin/mm
 ```
 
-Step 4: verify install.
-
-```bash
-which mm
-mm --tutorial
-```
-
-#### Option B: install to `~/bin` (no sudo)
-
-Step 1: create a personal bin directory (if it does not exist).
-
-```bash
-mkdir -p ~/bin
-```
-
-Step 2: download and install there.
-
-```bash
-curl -L -o ~/bin/mm https://github.com/SarriaXD/mouse-mover/releases/latest/download/mm_darwin_arm64
-chmod +x ~/bin/mm
-```
-
-Step 3: ensure `~/bin` is in PATH (only needed once).
-
-```bash
-echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
-```
-
-Step 4: verify install.
+Verify:
 
 ```bash
 which mm
@@ -137,18 +96,16 @@ mm --tutorial
 
 #### Update to latest version (when you want to upgrade)
 
-If you installed to `/usr/local/bin`:
-
 ```bash
 curl -L -o /usr/local/bin/mm https://github.com/SarriaXD/mouse-mover/releases/latest/download/mm_darwin_arm64
 chmod +x /usr/local/bin/mm
 ```
 
-If you installed to `~/bin`:
+#### Uninstall
 
 ```bash
-curl -L -o ~/bin/mm https://github.com/SarriaXD/mouse-mover/releases/latest/download/mm_darwin_arm64
-chmod +x ~/bin/mm
+sudo rm -f /usr/local/bin/mm
+which mm
 ```
 
 ### Windows (PowerShell)
