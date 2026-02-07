@@ -9,6 +9,10 @@ func MoveTo(x, y int) error {
 	return moveTo(x, y)
 }
 
+func ScrollVertical(lines int) error {
+	return scrollVertical(lines)
+}
+
 func Position() (Point, error) {
 	x, y, err := position()
 	if err != nil {

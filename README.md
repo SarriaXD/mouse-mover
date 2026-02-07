@@ -1,49 +1,34 @@
 # mouse-mover (`mm`)
 
-A tiny CLI to keep your machine active by moving the mouse with office-like, non-robotic patterns.
+A tiny CLI to keep your machine active with human-like mouse movement and wheel scrolling.
 
 ## Features
 
-- Default behavior: run forever (`mm`)
-- Simple time setting: `mm 120` means run 120 minutes
-- Human-like movement style:
-  - mostly short drifts
-  - sometimes medium/long moves
-  - smooth easing + tiny jitters + occasional pauses
+- Minimal input: only one optional time parameter
+  - `mm` runs forever
+  - `mm 120` runs for 120 minutes
+- More realistic behavior loop:
+  - smooth non-linear movement with micro jitters
+  - occasional tiny corrections after move
+  - random short/medium/long pauses
+  - wheel scroll bursts in both directions
 - Cross-platform implementation included:
   - Windows: supported
   - macOS: supported (requires Accessibility permission)
   - Linux: placeholder (not implemented yet)
 
-## Quick commands (tutorial style)
+## Usage
 
 ```bash
-# 1) Start now, run forever
+# run forever
 mm
 
-# 2) Work for 2 hours
+# run for 2 hours
 mm 120
 
-# 3) Lunch break cover (90 min)
-mm 90
-
-# 4) Fast anti-idle mode (move every 20s)
-mm -i 20
-
-# 5) Test without moving cursor
-mm 5 --dry-run
-
-# Show tutorial text again
-mm --tutorial
+# show help
+mm --help
 ```
-
-## Flags
-
-- `-m <minutes>`: run minutes, `0` means forever
-- `-i <seconds>`: interval between movement cycles (default `30`)
-- `--dry-run`: print movement points, do not move cursor
-- `--tutorial`: print quick usage examples
-- `--seed <n>`: set random seed for reproducible movement
 
 ## Build
 
@@ -91,10 +76,10 @@ Verify:
 
 ```bash
 which mm
-mm --tutorial
+mm --help
 ```
 
-#### Update to latest version (when you want to upgrade)
+#### Update to latest version
 
 ```bash
 curl -L -o /usr/local/bin/mm https://github.com/SarriaXD/mouse-mover/releases/latest/download/mm_darwin_arm64
@@ -122,27 +107,14 @@ Step 3: open a new PowerShell window and verify:
 
 ```powershell
 Get-Command mm
-mm --tutorial
-```
-
-### Basic usage
-
-```bash
-# run forever (default)
-mm
-
-# run for 2 hours
-mm 120
-
-# test mode (no real cursor movement)
-mm 5 --dry-run
+mm --help
 ```
 
 ## Notes
 
 - On macOS, first run may fail until terminal app is granted Accessibility permission in:
   - `System Settings > Privacy & Security > Accessibility`
-- Linux build is included in release assets, but runtime mouse movement on Linux is currently not implemented.
+- Linux build is included in release assets, but runtime mouse movement/scrolling on Linux is currently not implemented.
 
 ## Release (GitHub Actions, automatic)
 

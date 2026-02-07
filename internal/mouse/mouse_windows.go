@@ -18,11 +18,14 @@ var (
 	procSetCursorPos  = user32.NewProc("SetCursorPos")
 	procGetCursorPos  = user32.NewProc("GetCursorPos")
 	procGetSystemMtrx = user32.NewProc("GetSystemMetrics")
+	procMouseEvent    = user32.NewProc("mouse_event")
 )
 
 const (
 	smCXScreen = 0
 	smCYScreen = 1
+
+	mouseeventfWheel = 0x0800
 )
 
 func moveTo(x, y int) error {
@@ -30,6 +33,16 @@ func moveTo(x, y int) error {
 	if r == 0 {
 		return fmt.Errorf("SetCursorPos failed: %w", err)
 	}
+	return nil
+}
+
+func scrollVertical(lines int) error {
+	if lines == 0 {
+		return nil
+	}
+	const wheelDelta = 120
+	data := int32(lines * wheelDelta)
+	procMouseEvent.Call(mouseeventfWheel, 0, 0, uintptr(uint32(data)), 0)
 	return nil
 }
 
