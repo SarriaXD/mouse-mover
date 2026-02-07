@@ -79,37 +79,94 @@ mm
 
 ### macOS (arm64)
 
-First-time install (only once):
+#### Option A: install to `/usr/local/bin` (global command, needs admin permission)
+
+Step 1: download binary into your current directory (the folder from `pwd`).
 
 ```bash
 curl -L -o mm https://github.com/SarriaXD/mouse-mover/releases/latest/download/mm_darwin_arm64
-chmod +x mm
-mv mm /usr/local/bin/mm
 ```
 
-Check install:
+Step 2: make the downloaded file executable.
+
+```bash
+chmod +x mm
+```
+
+Step 3: move it to `/usr/local/bin` so you can run `mm` anywhere.
+
+```bash
+sudo mv mm /usr/local/bin/mm
+```
+
+Step 4: verify install.
 
 ```bash
 which mm
 mm --tutorial
 ```
 
-Update to latest version later (re-download and replace):
+#### Option B: install to `~/bin` (no sudo)
+
+Step 1: create a personal bin directory (if it does not exist).
+
+```bash
+mkdir -p ~/bin
+```
+
+Step 2: download and install there.
+
+```bash
+curl -L -o ~/bin/mm https://github.com/SarriaXD/mouse-mover/releases/latest/download/mm_darwin_arm64
+chmod +x ~/bin/mm
+```
+
+Step 3: ensure `~/bin` is in PATH (only needed once).
+
+```bash
+echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Step 4: verify install.
+
+```bash
+which mm
+mm --tutorial
+```
+
+#### Update to latest version (when you want to upgrade)
+
+If you installed to `/usr/local/bin`:
 
 ```bash
 curl -L -o /usr/local/bin/mm https://github.com/SarriaXD/mouse-mover/releases/latest/download/mm_darwin_arm64
 chmod +x /usr/local/bin/mm
 ```
 
+If you installed to `~/bin`:
+
+```bash
+curl -L -o ~/bin/mm https://github.com/SarriaXD/mouse-mover/releases/latest/download/mm_darwin_arm64
+chmod +x ~/bin/mm
+```
+
 ### Windows (PowerShell)
 
-First-time install:
+Step 1: download `mm.exe` into your current directory.
 
 ```powershell
 Invoke-WebRequest -Uri "https://github.com/SarriaXD/mouse-mover/releases/latest/download/mm_windows_amd64.exe" -OutFile "mm.exe"
 ```
 
-Then move `mm.exe` into a folder in your PATH (or add its folder to PATH).
+Step 2: move `mm.exe` into a folder already in your `PATH`, or add its folder to `PATH`.
+
+Step 3: open a new PowerShell window and verify:
+
+```powershell
+Get-Command mm
+mm --tutorial
+```
 
 ### Basic usage
 
