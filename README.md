@@ -79,3 +79,64 @@ mm
 
 - On macOS, first run may fail until terminal app is granted Accessibility permission in:
   - `System Settings > Privacy & Security > Accessibility`
+- Linux build is included in release assets, but runtime mouse movement on Linux is currently not implemented.
+
+## Release (GitHub Actions, automatic)
+
+This repo includes an auto-release workflow at:
+
+- `/Users/qi/dev/mouse-mover/.github/workflows/release.yml`
+
+How it works:
+
+1. You push a tag like `v0.1.0`
+2. GitHub Actions builds binaries on 3 runners:
+   - macOS arm64: `mm_v0.1.0_darwin_arm64`
+   - Windows amd64: `mm_v0.1.0_windows_amd64.exe`
+   - Linux amd64: `mm_v0.1.0_linux_amd64`
+3. Action creates a GitHub Release and uploads those files automatically
+
+### First-time release checklist
+
+1. Ensure your default branch is up to date (usually `main` or `master`):
+
+```bash
+git checkout <default-branch>
+git pull origin <default-branch>
+```
+
+2. Commit your changes:
+
+```bash
+git add .
+git commit -m "chore: prepare release"
+git push origin <default-branch>
+```
+
+3. Create and push a version tag:
+
+```bash
+git tag -a v0.1.0 -m "v0.1.0"
+git push origin v0.1.0
+```
+
+4. Check Actions:
+
+- Open: `https://github.com/SarriaXD/mouse-mover/actions`
+- Wait for workflow `release` to finish (green)
+
+5. Check Release page:
+
+- Open: `https://github.com/SarriaXD/mouse-mover/releases`
+- Confirm assets are attached
+
+### Next release
+
+Use a new tag each time, for example:
+
+```bash
+git tag -a v0.1.1 -m "v0.1.1"
+git push origin v0.1.1
+```
+
+Never reuse an existing tag name.

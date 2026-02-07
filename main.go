@@ -14,7 +14,7 @@ import (
 	"syscall"
 	"time"
 
-	"mouse-mover/internal/mouse"
+	"github.com/SarriaXD/mouse-mover/internal/mouse"
 )
 
 const (
