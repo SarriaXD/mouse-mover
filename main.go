@@ -92,6 +92,12 @@ func run(cfg config) error {
 	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
 	defer signal.Stop(sigCh)
 
+	stopCh := make(chan struct{})
+	go func() {
+		<-sigCh
+		close(stopCh)
+	}()
+
 	for {
 		if !end.IsZero() && time.Now().After(end) {
 			fmt.Println("mm finished: configured duration reached")
@@ -99,35 +105,43 @@ func run(cfg config) error {
 		}
 
 		select {
-		case <-sigCh:
+		case <-stopCh:
 			fmt.Println("mm stopped by signal")
 			return nil
 		default:
 		}
 
-		if err := m.humanCycle(); err != nil {
+		if err := m.humanCycle(stopCh); err != nil {
+			if err == errStopped {
+				fmt.Println("mm stopped by signal")
+				return nil
+			}
 			return err
 		}
 	}
 }
 
-func (m mover) humanCycle() error {
-	if err := m.humanMove(); err != nil {
+var errStopped = fmt.Errorf("stopped")
+
+func (m mover) humanCycle(stopCh <-chan struct{}) error {
+	if err := m.humanMove(stopCh); err != nil {
 		return err
 	}
 
 	if m.rng.Float64() < 0.58 {
-		if err := m.humanScrollBurst(); err != nil {
+		if err := m.humanScrollBurst(stopCh); err != nil {
 			return err
 		}
 	}
 
 	pause := m.pauseDuration()
-	time.Sleep(pause)
+	if err := sleepInterruptible(stopCh, pause); err != nil {
+		return err
+	}
 	return nil
 }
 
-func (m mover) humanMove() error {
+func (m mover) humanMove(stopCh <-chan struct{}) error {
 	pos, err := mouse.Position()
 	if err != nil {
 		return err
@@ -145,6 +159,12 @@ func (m mover) humanMove() error {
 	phase := m.rng.Float64() * 2 * math.Pi
 
 	for i := 1; i <= steps; i++ {
+		select {
+		case <-stopCh:
+			return errStopped
+		default:
+		}
+
 		t := float64(i) / float64(steps)
 		eased := easeInOut(t)
 
@@ -166,25 +186,41 @@ func (m mover) humanMove() error {
 		if m.rng.Float64() < 0.12 {
 			sleepMs += 10 + m.rng.Intn(30)
 		}
-		time.Sleep(time.Duration(sleepMs) * time.Millisecond)
+		if err := sleepInterruptible(stopCh, time.Duration(sleepMs)*time.Millisecond); err != nil {
+			return err
+		}
 	}
 
 	microFixes := m.rng.Intn(3)
 	for i := 0; i < microFixes; i++ {
+		select {
+		case <-stopCh:
+			return errStopped
+		default:
+		}
+
 		fx := clamp(targetX+(m.rng.Intn(7)-3), 0, max(0, size.X-1))
 		fy := clamp(targetY+(m.rng.Intn(7)-3), 0, max(0, size.Y-1))
 		if err := mouse.MoveTo(fx, fy); err != nil {
 			return err
 		}
-		time.Sleep(time.Duration(25+m.rng.Intn(70)) * time.Millisecond)
+		if err := sleepInterruptible(stopCh, time.Duration(25+m.rng.Intn(70))*time.Millisecond); err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-func (m mover) humanScrollBurst() error {
+func (m mover) humanScrollBurst(stopCh <-chan struct{}) error {
 	bursts := 1 + m.rng.Intn(3)
 	for b := 0; b < bursts; b++ {
+		select {
+		case <-stopCh:
+			return errStopped
+		default:
+		}
+
 		lines := 1 + m.rng.Intn(4)
 		dir := 1
 		if m.rng.Float64() < 0.48 {
@@ -195,17 +231,41 @@ func (m mover) humanScrollBurst() error {
 		}
 
 		for i := 0; i < lines; i++ {
+			select {
+			case <-stopCh:
+				return errStopped
+			default:
+			}
+
 			if err := mouse.ScrollVertical(dir); err != nil {
 				return err
 			}
-			time.Sleep(time.Duration(45+m.rng.Intn(190)) * time.Millisecond)
+			if err := sleepInterruptible(stopCh, time.Duration(45+m.rng.Intn(190))*time.Millisecond); err != nil {
+				return err
+			}
 		}
 
 		if b < bursts-1 {
-			time.Sleep(time.Duration(250+m.rng.Intn(1300)) * time.Millisecond)
+			if err := sleepInterruptible(stopCh, time.Duration(250+m.rng.Intn(1300))*time.Millisecond); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
+}
+
+func sleepInterruptible(stopCh <-chan struct{}, d time.Duration) error {
+	if d <= 0 {
+		return nil
+	}
+	t := time.NewTimer(d)
+	defer t.Stop()
+	select {
+	case <-stopCh:
+		return errStopped
+	case <-t.C:
+		return nil
+	}
 }
 
 func (m mover) pickTarget(pos, size mouse.Point) (int, int) {
