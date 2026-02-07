@@ -79,17 +79,37 @@ mm
 
 ### macOS (arm64)
 
+First-time install (only once):
+
 ```bash
 curl -L -o mm https://github.com/SarriaXD/mouse-mover/releases/latest/download/mm_darwin_arm64
 chmod +x mm
 mv mm /usr/local/bin/mm
 ```
 
+Check install:
+
+```bash
+which mm
+mm --tutorial
+```
+
+Update to latest version later (re-download and replace):
+
+```bash
+curl -L -o /usr/local/bin/mm https://github.com/SarriaXD/mouse-mover/releases/latest/download/mm_darwin_arm64
+chmod +x /usr/local/bin/mm
+```
+
 ### Windows (PowerShell)
+
+First-time install:
 
 ```powershell
 Invoke-WebRequest -Uri "https://github.com/SarriaXD/mouse-mover/releases/latest/download/mm_windows_amd64.exe" -OutFile "mm.exe"
 ```
+
+Then move `mm.exe` into a folder in your PATH (or add its folder to PATH).
 
 ### Basic usage
 
