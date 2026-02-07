@@ -39,14 +39,18 @@ jobs:
           set -euo pipefail
           BIN="mm${{ matrix.ext }}"
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -trimpath -ldflags "-s -w" -o "$BIN" .
-          ASSET="mm_${GITHUB_REF_NAME}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.ext }}"
-          mv "$BIN" "$ASSET"
+          FIXED_ASSET="mm_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.ext }}"
+          VERSIONED_ASSET="mm_${GITHUB_REF_NAME}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.ext }}"
+          cp "$BIN" "$FIXED_ASSET"
+          cp "$BIN" "$VERSIONED_ASSET"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: mm-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: mm_${{ github.ref_name }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.ext }}
+          path: |
+            mm_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.ext }}
+            mm_${{ github.ref_name }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.ext }}
 
   release:
     runs-on: ubuntu-latest

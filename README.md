@@ -75,6 +75,35 @@ Then you can run:
 mm
 ```
 
+## Install from GitHub Release
+
+### macOS (arm64)
+
+```bash
+curl -L -o mm https://github.com/SarriaXD/mouse-mover/releases/latest/download/mm_darwin_arm64
+chmod +x mm
+mv mm /usr/local/bin/mm
+```
+
+### Windows (PowerShell)
+
+```powershell
+Invoke-WebRequest -Uri "https://github.com/SarriaXD/mouse-mover/releases/latest/download/mm_windows_amd64.exe" -OutFile "mm.exe"
+```
+
+### Basic usage
+
+```bash
+# run forever (default)
+mm
+
+# run for 2 hours
+mm 120
+
+# test mode (no real cursor movement)
+mm 5 --dry-run
+```
+
 ## Notes
 
 - On macOS, first run may fail until terminal app is granted Accessibility permission in:
@@ -85,15 +114,15 @@ mm
 
 This repo includes an auto-release workflow at:
 
-- `/Users/qi/dev/mouse-mover/.github/workflows/release.yml`
+- `.github/workflows/release.yml`
 
 How it works:
 
 1. You push a tag like `v0.1.0`
 2. GitHub Actions builds binaries on 3 runners:
-   - macOS arm64: `mm_v0.1.0_darwin_arm64`
-   - Windows amd64: `mm_v0.1.0_windows_amd64.exe`
-   - Linux amd64: `mm_v0.1.0_linux_amd64`
+   - macOS arm64: `mm_darwin_arm64` and `mm_v0.1.0_darwin_arm64`
+   - Windows amd64: `mm_windows_amd64.exe` and `mm_v0.1.0_windows_amd64.exe`
+   - Linux amd64: `mm_linux_amd64` and `mm_v0.1.0_linux_amd64`
 3. Action creates a GitHub Release and uploads those files automatically
 
 ### First-time release checklist
